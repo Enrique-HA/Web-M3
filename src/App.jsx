@@ -1,122 +1,113 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import Buscador from "./componentes/Buscador.jsx";
+import SelectorVista from "./componentes/SelectorVista.jsx";
+import Filtros from "./componentes/Filtros.jsx";
+import ListaSeries from "./componentes/ListaSeries.jsx";
+import Cargando from "./componentes/Cargando.jsx";
+import Mensaje from "./componentes/Mensaje.jsx";
+import { useFetch } from "./hooks/useFetch.jsx";
+import { useLocalStorage } from "./hooks/useLocalStorage.jsx";
+import { obtenerSeries } from "./utils/api.js";
+import { contarGeneros, filtrarPorGenero} from "./utils/series.js";
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+
+  const [consulta, setConsulta] = useState("");
+  const [vista, setVista] = useState("busqueda");
+  const [genero, setGenero] = useState(""); 
+  const [favoritas, setFavoritas] = useLocalStorage("busca-serie:favoritas", []);
+
+
+  const { datos, cargando, error, reintentar } = useFetch(obtenerSeries, consulta);
+
+  const enBusqueda = vista === "busqueda";
+  const origen = enBusqueda ? (datos ?? []) : favoritas;
+  const generos = contarGeneros(origen);
+
+  const generoActivo = generos.some((g) => g.nombre === genero) ? genero : "";
+  const visibles = filtrarPorGenero(origen, generoActivo);
+
+
+  function buscar(nombre) {
+    setConsulta(nombre);
+    setVista("busqueda");
+    setGenero("");
+  }
+
+  function alternarFavorita(serie) {
+    setFavoritas((actuales) =>
+      actuales.some((f) => f.id === serie.id)
+        ? actuales.filter((f) => f.id !== serie.id)
+        : [...actuales, serie]
+    );
+  }
+
+  let contenido;
+  if (origen.length > 0) {
+    contenido = (
+      <ListaSeries series={visibles} favoritas={favoritas} onAlternarFavorita={alternarFavorita} />
+    );
+  } else if (!enBusqueda) {
+    contenido = (
+      <Mensaje titulo="Tu lista está vacía">
+        <p>Pulsa ☆ en cualquier serie para guardarla aquí.</p>
+      </Mensaje>
+    );
+  } else if (cargando) {
+    contenido = <Cargando />;
+  } else if (error) {
+    contenido = (
+      <Mensaje tipo="error" titulo="No se pudieron cargar las series">
+        <p>Comprueba tu conexión e inténtalo de nuevo. ({error.message})</p>
+        <button type="button" onClick={reintentar}>
+          Reintentar
+        </button>
+      </Mensaje>
+    );
+  } else if (consulta === "") {
+    contenido = (
+      <Mensaje titulo="Empieza por buscar una serie">
+        <p>Escribe un nombre arriba y pulsa Intro.</p>
+      </Mensaje>
+    );
+  } else {
+    contenido = (
+      <Mensaje titulo="Sin resultados">
+        <p>No hay series que coincidan con «{consulta}». Prueba con otro nombre.</p>
+      </Mensaje>
+    );
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+      <header>
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+          <h1>Busca-Serie</h1>
+          <p>Encuentra tu serie favorita</p>
+          <Buscador onBuscar={buscar} />
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main>
+        <SelectorVista vista={vista} onCambiarVista={setVista} totalFavoritas={favoritas.length} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {origen.length > 0 && (
+          <Filtros
+            generos={generos}
+            genero={generoActivo}
+            onCambiarGenero={setGenero}
+          />
+        )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+        {contenido}
+      </main>
+
+      <footer>
+        <p>
+          Datos de <a href="https://www.tvmaze.com/">TVmaze</a>
+        </p>
+      </footer>
     </>
-  )
+  );
 }
-
-export default App
