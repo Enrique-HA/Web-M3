@@ -1,4 +1,4 @@
-import { normalizarSerie } from "series.js";
+import { normalizarSerie } from "./series.js";
 import { leerCache, guardarCache } from "./storage.js";
 
 const URL_BUSQUEDA = "https://api.tvmaze.com/search/shows";

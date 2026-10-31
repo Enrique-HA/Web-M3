@@ -1,0 +1,213 @@
+/* ---------- base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1a1f4d;
+  background: #f3f4f8;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- cabecera, contenido y pie ---------- */
+header {
+  padding: 2rem 0;
+  color: #fff;
+  background: #1a1f4d;
+  border-bottom: 8px solid #f2c500;
+}
+
+header > div,
+main {
+  width: min(100% - 2rem, 1000px);
+  margin-inline: auto;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+header p {
+  margin: 0.25rem 0 0;
+}
+
+main {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+footer {
+  padding: 1rem;
+  text-align: center;
+  color: #50557f;
+}
+
+/* ---------- formularios y botones ---------- */
+input,
+select,
+button {
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid #cfd2e3;
+  border-radius: 4px;
+}
+
+input,
+select {
+  color: #1a1f4d;
+  background: #fff;
+}
+
+button {
+  background: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* botones principales (Buscar, Reintentar) */
+form button,
+[role="alert"] button {
+  font-weight: bold;
+  background: #f2c500;
+  border-color: #f2c500;
+}
+
+/* botón "activo": pestaña elegida o serie favorita */
+button[aria-pressed="true"] {
+  font-weight: bold;
+  background: #f2c500;
+  border-color: #f2c500;
+}
+
+/* buscador */
+form {
+  margin-top: 1.25rem;
+  max-width: 600px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+form div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+form input {
+  flex: 1;
+}
+
+/* pestañas Resultados / Mi lista */
+nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* filtros: es el único <div> hijo de main que no tiene atributo role */
+main > div:not([role]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+main label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: bold;
+}
+
+main label select {
+  font-weight: normal;
+}
+
+/* ---------- lista de series ---------- */
+main > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  height: 100%;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 6px;
+}
+
+article img {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+article h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+article p {
+  margin: 0;
+}
+
+/* géneros */
+article ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: #50557f;
+}
+
+/* resumen: se recorta a 4 líneas mientras su botón diga "Ver más" (aria-expanded="false") */
+article:has(button[aria-expanded="false"]) p:last-of-type {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+/* ---------- mensajes (error, vacío, cargando) ---------- */
+[role="status"],
+[role="alert"] {
+  max-width: 34rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-left: 6px solid #12a8c9;
+}
+
+[role="alert"] {
+  border-left-color: #d93a2b;
+}
+
+[role="status"] h2,
+[role="alert"] h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}

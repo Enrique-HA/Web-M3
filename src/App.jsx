@@ -9,7 +9,7 @@ import { useFetch } from "./hooks/useFetch.jsx";
 import { useLocalStorage } from "./hooks/useLocalStorage.jsx";
 import { obtenerSeries } from "./utils/api.js";
 import { contarGeneros, filtrarPorGenero} from "./utils/series.js";
-import './App.css'
+import './estilos.css'
 
 export default function App() {
 
