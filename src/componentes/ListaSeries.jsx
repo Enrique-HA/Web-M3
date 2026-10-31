@@ -1,8 +1,8 @@
 import TarjetaSerie from "./TarjetaSerie.jsx";
 
-export default function ListaSeries({series}) {
+export default function ListaSeries({series, favoritas, onAlternarFavorita }) {
 
-
+  const idsFavoritas = new Set(favoritas.map((f) => f.id));
   return (
     <>
       <p>
@@ -14,6 +14,8 @@ export default function ListaSeries({series}) {
           <li key={serie.id}>
             <TarjetaSerie
               serie={serie}
+              esFavorita={idsFavoritas.has(serie.id)}
+              onAlternarFavorita={onAlternarFavorita}
             />
           </li>
         ))}

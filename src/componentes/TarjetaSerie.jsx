@@ -1,4 +1,4 @@
-export default function TarjetaSerie({serie}) {
+export default function TarjetaSerie({serie, esFavorita, onAlternarFavorita }) {
 
   return (
     <article>
@@ -7,7 +7,16 @@ export default function TarjetaSerie({serie}) {
                        :(<div>Sin imagen</div>)}
 
       </div>
-
+      <button
+          type="button"
+          aria-pressed={esFavorita}
+          aria-label={
+            esFavorita ? `Quitar ${serie.nombre} de Mi lista` : `Guardar ${serie.nombre} en Mi lista`
+          }
+          onClick={() => onAlternarFavorita(serie)}
+        >
+          {esFavorita ? "★" : "☆"}
+        </button>
       <h2>{serie.nombre}</h2>
 
       <p>
